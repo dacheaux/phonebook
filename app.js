@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('hbs');
+const expressValidator = require('express-validator')
 
 const form = require('./views/form.hbs');
 const indexRouter = require('./routes/index');
@@ -12,10 +13,12 @@ const usersRouter = require('./routes/users');
 const app = express();
 hbs.registerPartial('form', form);
 
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+app.use(expressValidator());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
