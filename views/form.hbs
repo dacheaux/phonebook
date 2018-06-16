@@ -1,16 +1,20 @@
-  <form method="POST" action="">
+  <form method="POST" action="/add">
     <div class="form-row">
-      <div class="form-group col">
-        <input type="text" class="form-control" name="firstname" placeholder="First Name">
+      <div class="col form-group mr-2">
+        <label for="firstname">First name</label>
+        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="John">
       </div>
-      <div class="form-group col">
-        <input type="text" class="form-control" name="lastname" placeholder="Last Name">
+      <div class="col form-group mr-2">
+        <label for="lastname">Last name</label>
+        <input type="text" class="form-control" name="lastname" placeholder="Doe">
       </div>
-      <div class="form-group col">
-        <input type="text" class="form-control" name="telephone" placeholder="Telephone Number">
+      <div class="col form-group mr-2">
+        <label for="telephone">Telephone number</label>
+        <input type="text" class="form-control" name="telephone" placeholder="060/111-222">
       </div>
-      <div class="form-group col">
-        <button type="submit" class="btn btn-primary">Enter new user</button>
+      <div class="col-auto form-group d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Add new user</button>
       </div>
     </div>
   </form>
+  <p class="text-danger">{{errMsg}}</p>

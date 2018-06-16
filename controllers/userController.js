@@ -4,28 +4,35 @@ const mysql = require('mysql');
 
 const keys = require('../config/keys');
 
-const pool = mysql.createPool({...keys, multipleStatements: true});
-let users = [];
+const pool = mysql.createPool({ ...keys, database: 'phonebook', multipleStatements: true });
+let users = [],
+  errMsg = '';
 
-exports.pbGet = [
-  (req, res, next) => {
-    pool.getConnection((err, connection) => {
-      console.log('\nConnected to the MySQL server.');
-      connection.query(`SELECT * FROM users`, (error, results, fields) => {
-        console.log(error);
-        users = JSON.parse(JSON.stringify(results));
-        connection.release();
-        res.render('index', { title: 'Phone Book', users });
-      });
-
-      if (err) {
-        throw err;
-      }
-    });
+exports.pbGet = (req, res, next) => {
+  if (req.app.locals.users) {
+    users = req.app.locals.users;
+    users = users.map(u => ({ ...u, link: `delete/${u.id}` }));
+    res.render('index', { users });
+    req.app.locals.users = null;
+    return;
   }
-];
+  pool.getConnection((err, connection) => {
+    connection.query(`SELECT * FROM users`, (error, results, fields) => {
+      users = JSON.parse(JSON.stringify(results));
+      users = users.map(u => ({ ...u, link: `delete/${u.id}` }));
+      errMsg = req.app.locals.errMsg ? `Error: ${req.app.locals.errMsg}` : '';
+      req.app.locals.errMsg = '';
+      connection.release();
+      res.render('index', { users, errMsg });
+    });
 
-exports.addNew = [
+    if (err) {
+      throw err;
+    }
+  });
+};
+
+exports.pbAdd = [
   body('firstname')
     .isLength({ min: 1 })
     .trim()
@@ -38,7 +45,9 @@ exports.addNew = [
     .withMessage('Last name must be specified.')
     .isAlphanumeric()
     .withMessage('Last name has non-alphanumeric characters.'),
-  body('telephone').isMobilePhone('any'),
+  body('telephone')
+    .isMobilePhone('any')
+    .withMessage('Enter valid telephone number.'),
   sanitizeBody('firstname')
     .trim()
     .escape(),
@@ -46,23 +55,20 @@ exports.addNew = [
     .trim()
     .escape(),
   sanitizeBody('telephone')
-    .trim()
-    .escape(),
+    .trim(),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      req.app.locals.errMsg = errors.array()[0].msg;
       res.redirect('/');
       return;
     } else {
       const { firstname, lastname, telephone } = req.body;
       pool.getConnection((err, connection) => {
-        console.log('Connected to the MySQL server.');
         connection.query(
-          `INSERT INTO users (first_name, last_name, telephone_number)
+          `INSERT INTO users (firstname, lastname, telephone)
            VALUES ('${firstname}', '${lastname}', '${telephone}');`,
           (error, results, fields) => {
-            console.log(error);
-            console.log(results);
             connection.release();
             res.redirect('/');
           }
@@ -76,17 +82,14 @@ exports.addNew = [
   }
 ];
 
-exports.delete = (req, res, next) => {
-  console.log('delete');
+exports.pbDelete = (req, res, next) => {
   pool.getConnection((err, connection) => {
-    console.log('Connected to the MySQL server.');
     connection.query(
       `DELETE FROM users WHERE id = '${req.params.id}';
        SET @num := 0;
        UPDATE users SET id = @num := (@num+1);
        ALTER TABLE users AUTO_INCREMENT = 1;`,
       (error, results, fields) => {
-        console.log(error);
         connection.release();
         res.redirect('/');
       }
