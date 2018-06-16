@@ -6,7 +6,7 @@ const keys = require('../config/keys');
 
 const pool = mysql.createPool({ ...keys, database: 'phonebook', multipleStatements: true });
 let users = [],
-  errMsg = '';
+  msg = '';
 
 exports.pbGet = (req, res, next) => {
   if (req.app.locals.users) {
@@ -14,16 +14,17 @@ exports.pbGet = (req, res, next) => {
     users = users.map(u => ({ ...u, link: `delete/${u.id}` }));
     res.render('index', { users });
     req.app.locals.users = null;
+    req.app.locals.msg = '';
     return;
   }
   pool.getConnection((err, connection) => {
     connection.query(`SELECT * FROM users`, (error, results, fields) => {
       users = JSON.parse(JSON.stringify(results));
       users = users.map(u => ({ ...u, link: `delete/${u.id}` }));
-      errMsg = req.app.locals.errMsg ? `Error: ${req.app.locals.errMsg}` : '';
-      req.app.locals.errMsg = '';
+      msg = req.app.locals.msg ? `Error: ${req.app.locals.msg}` : '';
+      req.app.locals.msg = '';
       connection.release();
-      res.render('index', { users, errMsg });
+      res.render('index', { users, msg });
     });
 
     if (err) {
@@ -59,7 +60,7 @@ exports.pbAdd = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      req.app.locals.errMsg = errors.array()[0].msg;
+      req.app.locals.msg = errors.array()[0].msg;
       res.redirect('/');
       return;
     } else {
