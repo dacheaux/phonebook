@@ -1,13 +1,15 @@
 var express = require('express');
 var router = express.Router();
 
-const userController = require('../controllers/userController');
+const { pbGet, pbAdd, pbDelete } = require('../controllers/userController');
+const { pbSearch } = require('../controllers/searchController');
 
-/* GET home page. */
-router.get('/', userController.pbGet);
+router.get('/', pbGet);
 
-router.post('/', userController.addNew);
+router.post('/add', pbAdd);
 
-router.use('/:id', userController.delete);
+router.post('/search', pbSearch);
+
+router.use('/delete/(:id)', pbDelete);
 
 module.exports = router;

@@ -1,0 +1,22 @@
+<table class="table table-hover mt-4">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">First name</th>
+      <th scope="col">Last name</th>
+      <th scope="col">Telephone number</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each users}}
+    <tr>
+      <th scope="row">{{@index}}</th>
+      <td>{{firstname}}</td>
+      <td>{{lastname}}</td>
+      <td>{{telephone}}</td>
+      <td><a href={{link}} class="btn btn-secondary btn-sm">delete</a></td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

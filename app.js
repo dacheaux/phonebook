@@ -2,44 +2,64 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
 const hbs = require('hbs');
-const expressValidator = require('express-validator')
+const expressValidator = require('express-validator');
+const mysql = require('mysql');
 
 const form = require('./views/form.hbs');
+const search = require('./views/search.hbs');
+const table = require('./views/table.hbs');
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 
+const keys = require('./config/keys');
 const app = express();
+const connection = mysql.createConnection(keys);
+
+connection.query('CREATE DATABASE IF NOT EXISTS phonebook', err => {
+  if (err) throw err;
+  connection.query('USE phonebook', err => {
+    if (err) throw err;
+    connection.query(
+      `CREATE TABLE IF NOT EXISTS users (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    firstname varchar(100),
+    lastname varchar(100),
+    telephone varchar(18),
+    PRIMARY KEY (id)
+    )`,
+      err => {
+        if (err) throw err;
+      }
+    );
+  });
+});
+
 hbs.registerPartial('form', form);
+hbs.registerPartial('search', search);
+hbs.registerPartial('table', table);
 
-
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 app.use(expressValidator());
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });

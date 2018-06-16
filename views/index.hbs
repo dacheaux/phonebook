@@ -1,27 +1,9 @@
-<h1>{{heading}}</h1>
-<p>Welcome to {{heading}}</p>
+<div class="container">
+<h1 class="mb-3"><a href="/">Phonebook</a></h1>
 
+{{> search}}
+<hr>
 {{> form}}
+{{> table}}
 
-<table class="table table-hover table-bordered">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Last Name</th>
-      <th scope="col">Telephone Number</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each users}}
-    <tr>
-      <th scope="row">{{id}}</th>
-      <td>{{first_name}}</td>
-      <td>{{last_name}}</td>
-      <td>{{telephone_number}}</td>
-      <td><a href={{id}}><button type="button">delete</button></a></td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
+</div>
