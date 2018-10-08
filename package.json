@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "set DEBUG=phonebook:* & nodemon ./bin/www",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run start"
+    "devstart": "set DEBUG=phonebook:* & nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
