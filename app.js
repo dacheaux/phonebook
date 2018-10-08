@@ -18,9 +18,9 @@ const app = express();
 const connection = mysql.createConnection(keys);
 console.log(connection, keys)
 
-connection.query(`CREATE DATABASE IF NOT EXISTS ${keys.name}`, err => {
+connection.query(`CREATE DATABASE IF NOT EXISTS ${keys.database}`, err => {
   if (err) throw err;
-  connection.query(`USE ${keys.name}`, err => {
+  connection.query(`USE ${keys.database}`, err => {
     if (err) throw err;
     connection.query(
       `CREATE TABLE IF NOT EXISTS users (
