@@ -17,9 +17,9 @@ const keys = require('./config/keys');
 const app = express();
 const connection = mysql.createConnection(keys);
 
-connection.query('CREATE DATABASE IF NOT EXISTS phonebook', err => {
+connection.query(`CREATE DATABASE IF NOT EXISTS ${keys.name}`, err => {
   if (err) throw err;
-  connection.query('USE phonebook', err => {
+  connection.query(`USE ${keys.name}`, err => {
     if (err) throw err;
     connection.query(
       `CREATE TABLE IF NOT EXISTS users (
