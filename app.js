@@ -15,11 +15,12 @@ const indexRouter = require('./routes/index');
 
 const keys = require('./config/keys');
 const app = express();
-const connection = mysql.createConnection(keys);
+const connection = mysql.createConnection({host: 'sql7.freesqldatabase.com', user: 'sql7260304', password: 'jqWU7Ddjuv'});
+console.log(connection, keys)
 
-connection.query(`CREATE DATABASE IF NOT EXISTS ${keys.name}`, err => {
+connection.query(`CREATE DATABASE IF NOT EXISTS sql7260304`, err => {
   if (err) throw err;
-  connection.query(`USE ${keys.name}`, err => {
+  connection.query(`USE sql7260304`, err => {
     if (err) throw err;
     connection.query(
       `CREATE TABLE IF NOT EXISTS users (
