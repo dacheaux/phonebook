@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const keys = require('../config/keys');
 
-const pool = mysql.createPool({ ...keys, database: 'phonebook' });
+const pool = mysql.createPool({ ...keys, database: `${keys.database}` });
 
 exports.pbSearch = (req, res, next) => {
   pool.getConnection((err, connection) => {

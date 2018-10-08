@@ -4,7 +4,7 @@ const mysql = require('mysql');
 
 const keys = require('../config/keys');
 
-const pool = mysql.createPool({ ...keys, database: 'phonebook', multipleStatements: true });
+const pool = mysql.createPool({ ...keys, database: `${keys.database}`, multipleStatements: true });
 let users = [],
   msg = '';
 
